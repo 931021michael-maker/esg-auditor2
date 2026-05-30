@@ -72,13 +72,15 @@ def generate_pdf_bytes(text_content):
     pdf.add_page()
     pdf.set_margins(10, 10, 10)
     
-font_path = "NotoSansTC-Regular.ttf"  # 如果你用標楷體，就把這裡改成 "kaiu.ttf"
+    # 這裡的 font_path 前面應該要有 4 個空白 (縮排)
+    font_path = "NotoSansTC-Regular.ttf"  
     
+    # if 前面也要剛好 4 個空白，與 font_path 對齊
     if os.path.exists(font_path):
         pdf.add_font("ChineseFont", "", font_path)
         base_font = "ChineseFont"
     else:
-        st.error(f"⚠️ 找不到字型檔案 '{font_path}'！請確定已上傳至 GitHub。")
+        st.error(f"⚠️ 找不到字型檔案 '{font_path}'！")
         base_font = "Helvetica"
     
     pdf.set_font(base_font, size=16)
