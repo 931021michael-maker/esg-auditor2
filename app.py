@@ -9,19 +9,21 @@ from fpdf import FPDF
 # --- 1. 基本設定 ---
 st.set_page_config(page_title="TruESG 永續智審平台", page_icon="🌿", layout="wide")
 
+# 🌟 安全機制：從 Streamlit 雲端保險箱讀取金鑰
+try:
+    SYSTEM_API_KEY = st.secrets["GEMINI_API_KEY"]
+except:
+    SYSTEM_API_KEY = None
+
 # --- 2. 專業感左側邊欄 (Sidebar) ---
 with st.sidebar:
     st.title("⚙️ 系統狀態與設定")
     
-    # 🌟 重大修改：新增讓使用者輸入 API Key 的欄位
-    st.markdown("### 🔑 API 金鑰設定")
-    user_api_key = st.text_input("請輸入您的 Google Gemini API Key：", type="password")
-    st.caption("為保護您的隱私，金鑰不會被儲存。請至 [Google AI Studio](https://aistudio.google.com/app/apikey) 免費申請。")
-    
-    if user_api_key:
-        st.success("🟢 狀態：已連接金鑰\n\n引擎：Gemini 2.5 Flash")
+    # 畫面不再要求使用者輸入金鑰，而是直接顯示系統狀態
+    if SYSTEM_API_KEY:
+        st.success("🟢 狀態：系統已安全授權\n\n引擎：Gemini 2.5 Flash")
     else:
-        st.error("🔴 狀態：請先輸入金鑰以啟用系統")
+        st.error("🔴 狀態：伺服器未設定安全金鑰")
         
     st.markdown("---")
     st.markdown("### 📋 內建審核標準")
@@ -180,9 +182,8 @@ with col2:
 
 # --- 5. 執行審核與進度顯示 ---
 if start_btn:
-    # 🌟 重大修改：新增防呆機制，沒輸入金鑰就不准執行
-    if not user_api_key:
-        st.warning("⚠️ 系統未授權：請先在左側邊欄輸入您的 Google Gemini API Key。")
+    if not SYSTEM_API_KEY:
+        st.error("⚠️ 系統尚未設定安全金鑰，無法執行審核。請聯繫網站管理員。")
     elif not uploaded_file:
         st.warning("⚠️ 請先上傳一份 PDF 企劃書。")
     elif "錯誤" in system_prompt:
@@ -195,8 +196,8 @@ if start_btn:
                 st.session_state['raw_proposal_text'] = proposal_text
                 
                 st.write("🌐 正在連線至 AI 評測引擎...")
-                # 🌟 重大修改：這裡改用使用者輸入的金鑰
-                client = genai.Client(api_key=user_api_key)
+                # 🌟 使用從雲端保險箱讀出來的金鑰
+                client = genai.Client(api_key=SYSTEM_API_KEY)
                 
                 final_prompt = f"""
                 你是一個嚴格的第三方 ESG 審核系統。請完全依照以下【評分規則書】的邏輯，來審核使用者提交的【企劃書內容】。
@@ -240,7 +241,7 @@ if start_btn:
 
             except Exception as e:
                 status.update(label="❌ 發生錯誤", state="error", expanded=True)
-                st.error(f"連線或分析時發生錯誤 (可能是 API Key 無效或額度耗盡)：{e}")
+                st.error(f"連線或分析時發生錯誤：{e}")
 
 # --- 6. 報告展示區與 PDF 下載 ---
 if 'audit_report' in st.session_state:
