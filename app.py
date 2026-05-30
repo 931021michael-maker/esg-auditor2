@@ -72,7 +72,7 @@ def generate_pdf_bytes(text_content):
     pdf.add_page()
     pdf.set_margins(10, 10, 10)
     
-font_path = "NotoSansTC-Regular.ttf"  
+font_path = "NotoSansTC-Regular.ttf"  # 如果你用標楷體，就把這裡改成 "kaiu.ttf"
     
     if os.path.exists(font_path):
         pdf.add_font("ChineseFont", "", font_path)
