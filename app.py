@@ -161,7 +161,7 @@ def generate_pdf_bytes(text_content):
 
 # --- 4. 檔案上傳區與首頁引導 ---
 st.markdown("### 📂 第一步：上傳文件")
-uploaded_file = st.file_uploader("支援格式：PDF (建議檔案大小不超過 10MB)", type="pdf")
+uploaded_file = st.file_uploader("支援格式：PDF (建議檔案大小不超過 30MB)", type="pdf")
 
 if not uploaded_file and 'audit_report' not in st.session_state:
     st.markdown("---")
