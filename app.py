@@ -72,25 +72,14 @@ def generate_pdf_bytes(text_content):
     pdf.add_page()
     pdf.set_margins(10, 10, 10)
     
-    possible_fonts = [
-        "C:\\Windows\\Fonts\\msjh.ttc",
-        "C:\\Windows\\Fonts\\msjh.ttf",
-        "/System/Library/Fonts/PingFang.ttc",
-        "/System/Library/Fonts/STHeiti Light.ttc",
-        "/System/Library/Fonts/Supplemental/Arial Unicode.ttf"
-    ]
+font_path = "NotoSansTC-Regular.ttf"  
     
-    font_loaded = False
-    for font_path in possible_fonts:
-        if os.path.exists(font_path):
-            try:
-                pdf.add_font("ChineseFont", "", font_path)
-                font_loaded = True
-                break
-            except:
-                continue
-    
-    base_font = "ChineseFont" if font_loaded else "Helvetica"
+    if os.path.exists(font_path):
+        pdf.add_font("ChineseFont", "", font_path)
+        base_font = "ChineseFont"
+    else:
+        st.error(f"⚠️ 找不到字型檔案 '{font_path}'！請確定已上傳至 GitHub。")
+        base_font = "Helvetica"
     
     pdf.set_font(base_font, size=16)
     pdf.set_text_color(44, 62, 80)
