@@ -165,7 +165,7 @@ for line in lines:
             # 🌟 加上 align='L'
             pdf.multi_cell(0, 7, line, align='L')
             
-    return bytes(pdf.output())
+return bytes(pdf.output())
 
 # --- 4. 檔案上傳區與首頁引導 ---
 st.markdown("### 📂 第一步：上傳文件")
