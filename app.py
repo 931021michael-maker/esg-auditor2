@@ -104,7 +104,7 @@ def generate_pdf_bytes(text_content):
     clean_text = clean_text_for_pdf(text_content)
     lines = clean_text.split('\n')
     
-for line in lines:
+    for line in lines:
         line = line.strip()
         if not line:
             pdf.ln(3)
