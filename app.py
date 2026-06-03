@@ -59,12 +59,17 @@ def extract_text_from_pdf(file):
     return text
 
 def clean_text_for_pdf(raw_text):
+    # 1. 移除 Markdown 符號
     text = re.sub(r'[*#$_~`]', '', raw_text)
+    # 2. 統一條列式符號
     text = re.sub(r'^[\-\+]\s+', '・ ', text, flags=re.MULTILINE)
+    # 3. 避免過多空白與空行
     text = re.sub(r' {2,}', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
+    # 4. 移除換行時孤立的標點符號
     text = re.sub(r'^\s*[\.\,\;\:\'\"\]\[\}\{\(\)]\s*$', '', text, flags=re.MULTILINE)
-    text = re.sub(r'([^\s]{60})', r'\1 ', text)
+    
+    # 🚨 已經刪除會強制切斷文字的 60 字元限制，讓 PDF 引擎自然換行
     return text.strip()
 
 def generate_pdf_bytes(text_content):
