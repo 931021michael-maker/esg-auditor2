@@ -104,7 +104,7 @@ def generate_pdf_bytes(text_content):
     clean_text = clean_text_for_pdf(text_content)
     lines = clean_text.split('\n')
     
-    for line in lines:
+for line in lines:
         line = line.strip()
         if not line:
             pdf.ln(3)
@@ -117,7 +117,8 @@ def generate_pdf_bytes(text_content):
             pdf.set_font(base_font, size=12)
             pdf.set_text_color(255, 255, 255)
             pdf.set_fill_color(44, 62, 80)
-            pdf.multi_cell(0, 9, f" {line}", fill=True)
+            # 🌟 加上 align='L' 防止字距被拉扯
+            pdf.multi_cell(0, 9, f" {line}", fill=True, align='L')
             pdf.set_font(base_font, size=11)
             pdf.set_text_color(0, 0, 0)
             pdf.ln(2)
@@ -133,30 +134,36 @@ def generate_pdf_bytes(text_content):
             else:
                 pdf.set_fill_color(240, 248, 240)
                 pdf.set_text_color(56, 87, 35)
-            pdf.multi_cell(0, 8, f" {line}", fill=True)
+            # 🌟 加上 align='L' 防止字距被拉扯
+            pdf.multi_cell(0, 8, f" {line}", fill=True, align='L')
             pdf.set_text_color(0, 0, 0)
             pdf.ln(1)
             
         elif line.startswith("優點"):
             pdf.set_text_color(46, 117, 89)
-            pdf.multi_cell(0, 7, line)
+            # 🌟 加上 align='L'
+            pdf.multi_cell(0, 7, line, align='L')
             pdf.set_text_color(0, 0, 0)
             
         elif line.startswith("缺失"):
             pdf.set_text_color(170, 57, 57)
-            pdf.multi_cell(0, 7, line)
+            # 🌟 加上 align='L'
+            pdf.multi_cell(0, 7, line, align='L')
             pdf.set_text_color(0, 0, 0)
             
         elif "嚴重不足" in line or "不合格" in line:
             pdf.set_text_color(170, 57, 57)
-            pdf.multi_cell(0, 7, line)
+            # 🌟 加上 align='L'
+            pdf.multi_cell(0, 7, line, align='L')
             pdf.set_text_color(0, 0, 0)
             
         elif line.startswith("・") or line.startswith("·"):
             pdf.set_x(16)
-            pdf.multi_cell(0, 7, line)
+            # 🌟 加上 align='L'
+            pdf.multi_cell(0, 7, line, align='L')
         else:
-            pdf.multi_cell(0, 7, line)
+            # 🌟 加上 align='L'
+            pdf.multi_cell(0, 7, line, align='L')
             
     return bytes(pdf.output())
 
