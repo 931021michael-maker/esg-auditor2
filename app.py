@@ -63,13 +63,18 @@ def clean_text_for_pdf(raw_text):
     text = re.sub(r'[*#$_~`]', '', raw_text)
     # 2. 統一條列式符號
     text = re.sub(r'^[\-\+]\s+', '・ ', text, flags=re.MULTILINE)
+    
+    # 🌟 終極排版修復：在「中文字」與「英文/數字」之間自動加上半形空白
+    # 這樣 PDF 引擎才知道要在哪裡安全換行，絕對不會再把英文單字切斷！
+    text = re.sub(r'([\u4e00-\u9fa5])([a-zA-Z0-9])', r'\1 \2', text)
+    text = re.sub(r'([a-zA-Z0-9])([\u4e00-\u9fa5])', r'\1 \2', text)
+    
     # 3. 避免過多空白與空行
     text = re.sub(r' {2,}', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
     # 4. 移除換行時孤立的標點符號
     text = re.sub(r'^\s*[\.\,\;\:\'\"\]\[\}\{\(\)]\s*$', '', text, flags=re.MULTILINE)
     
-    # 🚨 已經刪除會強制切斷文字的 60 字元限制，讓 PDF 引擎自然換行
     return text.strip()
 
 def generate_pdf_bytes(text_content):
