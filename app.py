@@ -252,58 +252,53 @@ if start_btn:
                 st.error(f"連線或分析時發生錯誤：{e}")
 
 # --- 6. 報告展示區與 PDF 下載 ---
+沒問題！既然這套系統你是要拿來展示用的，「畫面乾淨、直覺、高顏值」絕對是第一優先。我們就把那個給工程師除錯用的 PDF 原始文字區塊直接砍掉！
+
+這樣一來，你也完全不用再去跟剛剛那個煩人的 st.tabs 縮排搏鬥了 😆。
+
+我幫你把剛剛提到的 「高階主管數據儀表板 (Metrics)」 跟 「下載按鈕」 完美融合在一個乾淨的單一畫面裡。
+
+🛠️ 終極乾淨專業版介面
+請直接把你的 --- 6. 報告展示區 --- 以下的程式碼，全部刪掉，然後換成下面這整段：
+
+Python
+# --- 6. 報告展示區與 PDF 下載 ---
 if 'audit_report' in st.session_state:
     st.markdown("---")
     
-    # 🌟 UI 優化：建立分頁標籤
-    tab_report, tab_raw = st.tabs(["📊 專業審核報告"])
+    # 🌟 標題與下載按鈕放在同一列 (左右排開)
+    title_col, btn_col = st.columns([3, 1])
+    with title_col:
+        st.markdown("### 📋 專業審核報告書")
+    with btn_col:
+        pdf_bytes = generate_pdf_bytes(st.session_state['audit_report'])
+        file_name = f"ESG_Review_Report_{st.session_state['audit_time']}.pdf"
+        st.download_button(
+            label="⬇️ 下載 PDF 報告",
+            data=pdf_bytes,
+            file_name=file_name,
+            mime="application/pdf",
+            type="primary",
+            use_container_width=True
+        )
     
-    # 第一個分頁：放正式報告與下載按鈕
-    with tab_report:
-        title_col, btn_col = st.columns([3, 1])
-        with title_col:
-            st.markdown("### 📋 專業審核報告書")
-        with btn_col:
-            pdf_bytes = generate_pdf_bytes(st.session_state['audit_report'])
-            file_name = f"ESG_Review_Report_{st.session_state['audit_time']}.pdf"
-            st.download_button(
-                label="⬇️ 下載 PDF 審核報告",
-                data=pdf_bytes,
-                file_name=file_name,
-                mime="application/pdf",
-                type="primary",
-                use_container_width=True
-            )
-        
+    # 🌟 UI 升級：自動抓取分數，產生大數字儀表板
+    report_text = st.session_state['audit_report']
+    e_score = re.search(r'環境.*?(\d+)分', report_text)
+    s_score = re.search(r'社會.*?(\d+)分', report_text)
+    g_score = re.search(r'治理.*?(\d+)分', report_text)
+    
+    e_val = f"{e_score.group(1)} / 5" if e_score else "需檢視"
+    s_val = f"{s_score.group(1)} / 5" if s_score else "不及格 🚨"
+    g_val = f"{g_score.group(1)} / 5" if g_score else "需檢視"
+
+    m1, m2, m3 = st.columns(3)
+    m1.metric(label="🌍 環境 (E)", value=e_val)
+    m2.metric(label="🤝 社會 (S)", value=s_val)
+    m3.metric(label="🏛️ 治理 (G)", value=g_val)
+    
+    st.divider() # 畫一條優雅的分隔線
+    
+    # 🌟 用一個精美的外框把報告內文包起來
     with st.container(border=True):
-        lines = st.session_state['audit_report'].split('\n')
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-                
-            if re.match(r'^(一|二|三|四|五|六|七|八|九|十)、', line):
-                st.markdown(f"#### 📘 {line}")
-            elif "評分：" in line or "分 / 5分" in line or "綜合結論：" in line:
-                if "1分" in line or "不及格" in line or "不合格" in line:
-                    st.error(line)
-                elif "2分" in line or "需重大改善" in line:
-                    st.warning(line)
-                else:
-                    st.success(line)
-            elif line.startswith("優點"):
-                st.markdown(f"🍏 <span style='color:#2e7559; font-weight:bold;'>{line}</span>", unsafe_allow_html=True)
-            elif line.startswith("缺失"):
-                st.markdown(f"🍎 <span style='color:#aa3939; font-weight:bold;'>{line}</span>", unsafe_allow_html=True)
-            elif "嚴重不足" in line or "不合格" in line:
-                st.markdown(f"<span style='color:#aa3939; font-weight:bold;'>{line}</span>", unsafe_allow_html=True)
-            elif line.startswith("・") or line.startswith("·"):
-                st.markdown(f"&nbsp;&nbsp;&nbsp;&nbsp;{line}")
-            else:
-                st.write(line)
-                
-    if 'raw_proposal_text' in st.session_state:
-        st.markdown("<br>", unsafe_allow_html=True)
-        with st.expander("👁️ 點此查看系統實際讀取的 PDF 原始文本 (透明度檢核)"):
-            st.caption("以下為 PDF 萃取系統讀取到的純文字內容。如果報告結果出現偏差，您可以比對此處的內容是否與原檔有落差。")
-            st.text_area("原始文本內容", st.session_state['raw_proposal_text'], height=250, disabled=True)
+        st.markdown(st.session_state['audit_report'])
