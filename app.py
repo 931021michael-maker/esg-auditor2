@@ -275,7 +275,7 @@ if 'audit_report' in st.session_state:
                 use_container_width=True
             )
         
-        with st.container(border=True):
+         with st.container(border=True):
         lines = st.session_state['audit_report'].split('\n')
         for line in lines:
             line = line.strip()
