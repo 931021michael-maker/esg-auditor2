@@ -256,7 +256,7 @@ if 'audit_report' in st.session_state:
     st.markdown("---")
     
     # 🌟 UI 優化：建立分頁標籤
-    tab_report, tab_raw = st.tabs(["📊 專業審核報告", "👁️ PDF 原始萃取文本"])
+    tab_report, tab_raw = st.tabs(["📊 專業審核報告"])
     
     # 第一個分頁：放正式報告與下載按鈕
     with tab_report:
