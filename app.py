@@ -259,7 +259,7 @@ if 'audit_report' in st.session_state:
     tab_report, tab_raw = st.tabs(["📊 專業審核報告", "👁️ PDF 原始萃取文本"])
     
     # 第一個分頁：放正式報告與下載按鈕
-    with tab_report:
+        with tab_report:
         title_col, btn_col = st.columns([3, 1])
         with title_col:
             st.markdown("### 📋 專業審核報告書")
@@ -275,7 +275,7 @@ if 'audit_report' in st.session_state:
                 use_container_width=True
             )
         
-         with st.container(border=True):
+        with st.container(border=True):
         lines = st.session_state['audit_report'].split('\n')
         for line in lines:
             line = line.strip()
